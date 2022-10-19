@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-// import { Accordion as BaseAccordion } from './base-accordion'
 import {
   BaseAccordion,
   preventClose,
