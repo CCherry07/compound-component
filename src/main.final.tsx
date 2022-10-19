@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Accordion as BaseAccordion } from './base-accordion'
 import {
-  AccordionButtonBase,
+  AccordionButton,
   AccordionItem,
   AccordionContents,
   single,
@@ -27,13 +27,13 @@ function Accordion({ items, ...props }: AccordionProps) {
         <div>
           {items.map((item: { title: string; contents: any }, index: any) => (
             <AccordionItem key={item.title} direction="vertical">
-              <AccordionButtonBase
+              <AccordionButton
                 isOpen={openIndexes.includes(index)}
                 onClick={() => handleItemClick(index)}
               >
                 {item.title}
                 <span>{openIndexes.includes(index) ? '👇' : '👈'}</span>
-              </AccordionButtonBase>
+              </AccordionButton>
               <AccordionContents isOpen={openIndexes.includes(index)}>
                 {item.contents}
               </AccordionContents>

@@ -1,1 +1,1 @@
-export * from './main.final';
+export * from './main.exercise';

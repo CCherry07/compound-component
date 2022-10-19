@@ -5,8 +5,60 @@ import { css as emoCSS } from '@emotion/react'
 import styled from '@emotion/styled'
 
 const css = (...args: any[]) => ({ ...emoCSS(...args) })
+type ActionType = 'opening' | "closing"
+const single = (state: number[], changes: { type: ActionType; activeIndex: number }) => {
+  switch (changes.type) {
+    case "opening":
+      return [changes.activeIndex]
+    case "closing":
+      //state.filter(i => i !== changes.activeIndex)
+      return []
+    default:
+      break;
+  }
+  return state
+}
+// const combineReducers = (...reducers: { (state: any, changes: any): any; (state: any, changes: any): any; (state: any, changes: any): any }[]) => (state: any, changes: any) =>
+//   reducers.reduce((acc, reducer) => reducer(state, acc), changes)
 
-const AccordionButton = styled('button')(
+const AccordionContext = React.createContext<AccordionContext | null>(null)
+interface BaseAccordionProps {
+  stateReducer?: React.Reducer<any, any>
+  children?: React.ReactElement;
+}
+function BaseAccordion(props: BaseAccordionProps) {
+  const [openIndexes, dispatch] = React.useReducer(single, [0])
+  return <AccordionContext.Provider value={{ openIndexes, dispatch }} {...props} />
+}
+interface AccordionContext {
+  openIndexes: number[],
+  dispatch: React.Dispatch<{
+    type: ActionType;
+    activeIndex: number;
+  }>
+}
+const useAccordionContext = () => {
+  const context = React.useContext(AccordionContext)
+  if (!context) throw new Error("")
+  return context
+}
+function AccordionButton({ children: child, activeIndex }: { children: React.ReactElement, activeIndex: number }) {
+  const { openIndexes, dispatch } = useAccordionContext()
+  const isOpen = openIndexes.includes(child.props.activeIndex)
+  return <AccordionButtonBase isOpen={isOpen}>
+    {React.cloneElement(child, {
+      onClick: (...args: []) => {
+        const closing = openIndexes.includes(activeIndex)
+        const type = closing ? "closing" : "opening"
+        console.log(type);
+        dispatch({ type, activeIndex })
+        child.props.onClick && child.props.onClick(...args)
+      },
+    })}
+  </AccordionButtonBase>
+}
+
+const AccordionButtonBase = styled('button')(
   {
     textAlign: 'left',
     minWidth: 80,
@@ -36,10 +88,12 @@ const PoseAccordionContents = posed.div({
 })
 
 interface AccordionContentsProps {
-  isOpen: boolean,
+  activeIndex: number
   children: React.ReactElement
 }
-function AccordionContents({ isOpen, ...props }: AccordionContentsProps) {
+function AccordionContents(props: AccordionContentsProps) {
+  const { openIndexes } = useAccordionContext()
+  const isOpen = openIndexes.includes(props.activeIndex)
   return (
     <PoseAccordionContents
       pose={isOpen ? 'open' : 'closed'}
@@ -62,7 +116,7 @@ const AccordionItem = styled('div')(
 )
 
 const TabButtons = styled('div')({ display: 'flex' })
-const TabButton = styled(AccordionButton)({
+const TabButton = styled(AccordionButtonBase)({
   textAlign: 'center',
 })
 const TabItems = styled('div')({
@@ -99,22 +153,13 @@ function TabItem({ position, isOpen, ...props }: TabItemProps) {
   )
 }
 
-const preventClose = (state: { openIndexes: string | any[] }, changes: { type: string }) =>
-  changes.type === 'closing' && state.openIndexes.length < 2
-    ? { ...changes, openIndexes: state.openIndexes }
-    : changes
 
-const single = (state: any, changes: { type: string; openIndexes: string | any[] }) =>
-  changes.type === 'opening'
-    ? { ...changes, openIndexes: changes.openIndexes.slice(-1) }
-    : changes
-
-const combineReducers = (...reducers: { (state: any, changes: any): any; (state: any, changes: any): any; (state: any, changes: any): any }[]) => (state: any, changes: any) =>
-  reducers.reduce((acc, reducer) => reducer(state, acc), changes)
 
 export {
   css,
+  BaseAccordion,
   AccordionButton,
+  AccordionButtonBase,
   AccordionItem,
   AccordionContents,
   AboveTabItem,
@@ -123,7 +168,5 @@ export {
   TabItems,
   TabButton,
   TabButtons,
-  combineReducers,
-  preventClose,
   single,
 }
