@@ -11,7 +11,6 @@ const single = (state: number[], changes: { type: ActionType; activeIndex: numbe
     case "opening":
       return [changes.activeIndex]
     case "closing":
-      //state.filter(i => i !== changes.activeIndex)
       return []
     default:
       break;
