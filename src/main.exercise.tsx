@@ -12,6 +12,7 @@ import {
   TabItem,
   TabItems,
   TabButtons,
+  BaseAccordionProps,
 } from './shared.hook'
 interface Item {
   title: string,
@@ -42,7 +43,7 @@ function Accordion({ items, ...props }: AccordionProps) {
   )
 }
 
-function BaseTabs({ stateReducer = (state: any, changes: any) => changes, ...props }) {
+function BaseTabs({ stateReducer, ...props }: BaseAccordionProps) {
   return (
     <BaseAccordion
       stateReducer={stateReducer}
@@ -53,33 +54,29 @@ function BaseTabs({ stateReducer = (state: any, changes: any) => changes, ...pro
 
 function Tabs({ items }: { items: Item[] }) {
   return (
-    <BaseTabs>
-      {({ openIndexes, handleItemClick }: { openIndexes: number[], handleItemClick: (index: number) => void }) => (
-        <div>
-          <TabItems>
-            {items.map((item, index) => (
-              <TabItem
-                key={index}
-                position="above"
-                isOpen={openIndexes.includes(index)}
-              >
-                {items[index].contents}
-              </TabItem>
-            ))}
-          </TabItems>
-          <TabButtons>
-            {items.map((item, index) => (
-              <TabButton
-                key={item.title}
-                isOpen={openIndexes.includes(index)}
-                onClick={() => handleItemClick(index)}
-              >
+    <BaseTabs stateReducer={single}>
+      <div>
+        <TabItems>
+          {items.map((item, index) => (
+            <TabItem
+              key={index}
+              activeIndex={index}
+              position="above"
+            >
+              {item.contents}
+            </TabItem>
+          ))}
+        </TabItems>
+        <TabButtons>
+          {items.map((item, index) => (
+            <TabButton key={index} activeIndex={index}>
+              <div>
                 {item.title}
-              </TabButton>
-            ))}
-          </TabButtons>
-        </div>
-      )}
+              </div>
+            </TabButton>
+          ))}
+        </TabButtons>
+      </div>
     </BaseTabs>
   )
 }
@@ -127,13 +124,12 @@ function App() {
         marginTop: 60,
       }}
     >
-      <Accordion items={items} />
+      <Tabs items={items} />
     </div>
   )
 }
 
 // ReactDOM.render(<App />, document.getElementById('root'))
-
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

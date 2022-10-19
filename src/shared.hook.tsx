@@ -5,7 +5,7 @@ import { css as emoCSS } from '@emotion/react'
 import styled from '@emotion/styled'
 
 const css = (...args: any[]) => ({ ...emoCSS(...args) })
-type ActionType = 'opening' | "closing"
+export type ActionType = 'opening' | "closing"
 const single = (state: number[], changes: { type: ActionType; activeIndex: number }) => {
   switch (changes.type) {
     case "opening":
@@ -30,7 +30,7 @@ const preventClose = (state: number[], changes: { type: ActionType; activeIndex:
 }
 
 const AccordionContext = React.createContext<AccordionContext | null>(null)
-interface BaseAccordionProps {
+export interface BaseAccordionProps {
   children?: React.ReactElement;
   stateReducer: React.Reducer<any, any>
 }
@@ -59,7 +59,6 @@ function AccordionButton({ children: child, activeIndex }: { children: React.Rea
       onClick: (...args: []) => {
         const closing = openIndexes.includes(activeIndex)
         const type = closing ? "closing" : "opening"
-        console.log(type);
         dispatch({ type, activeIndex })
         child.props.onClick && child.props.onClick(...args)
       },
@@ -125,7 +124,7 @@ const AccordionItem = styled('div')(
 )
 
 const TabButtons = styled('div')({ display: 'flex' })
-const TabButton = styled(AccordionButtonBase)({
+const TabButton = styled(AccordionButton)({
   textAlign: 'center',
 })
 const TabItems = styled('div')({
@@ -144,11 +143,15 @@ const AboveTabItem = posed.div({
 })
 
 interface TabItemProps {
-  position: string, isOpen: boolean, children: React.ReactElement,
-  pose?: 'open' | 'closed',
+  position: string,
+  children: React.ReactElement,
+  activeIndex: number
+  pose?: 'open' | 'closed'
   style?: React.CSSProperties
 }
-function TabItem({ position, isOpen, ...props }: TabItemProps) {
+function TabItem({ position, activeIndex, ...props }: TabItemProps) {
+  const { openIndexes } = useAccordionContext()
+  const isOpen = openIndexes.includes(activeIndex)
   props = {
     pose: isOpen ? 'open' : 'closed',
     style: { position: 'absolute', overflowY: 'hidden' },
