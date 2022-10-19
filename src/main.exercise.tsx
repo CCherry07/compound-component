@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 // import { Accordion as BaseAccordion } from './base-accordion'
 import {
   BaseAccordion,
+  preventClose,
   AccordionButton,
   AccordionItem,
   AccordionContents,
@@ -21,7 +22,7 @@ interface AccordionProps {
 }
 function Accordion({ items, ...props }: AccordionProps) {
   return (
-    <BaseAccordion stateReducer={single} {...props}>
+    <BaseAccordion stateReducer={preventClose} {...props}>
       <div>
         {items.map((item: { title: string; contents: any }, index: any) => (
           <AccordionItem key={item.title} direction="vertical">
@@ -44,6 +45,7 @@ function Accordion({ items, ...props }: AccordionProps) {
 function BaseTabs({ stateReducer = (state: any, changes: any) => changes, ...props }) {
   return (
     <BaseAccordion
+      stateReducer={stateReducer}
       {...props}
     />
   )

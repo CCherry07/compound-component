@@ -17,16 +17,26 @@ const single = (state: number[], changes: { type: ActionType; activeIndex: numbe
   }
   return state
 }
-// const combineReducers = (...reducers: { (state: any, changes: any): any; (state: any, changes: any): any; (state: any, changes: any): any }[]) => (state: any, changes: any) =>
-//   reducers.reduce((acc, reducer) => reducer(state, acc), changes)
+const preventClose = (state: number[], changes: { type: ActionType; activeIndex: number }) => {
+  switch (changes.type) {
+    case "opening":
+      return [...state, changes.activeIndex]
+    case "closing":
+      return state.length < 2 ? [changes.activeIndex] : state.filter(i => i !== changes.activeIndex)
+    default:
+      break;
+  }
+  return state
+}
 
 const AccordionContext = React.createContext<AccordionContext | null>(null)
 interface BaseAccordionProps {
-  stateReducer?: React.Reducer<any, any>
   children?: React.ReactElement;
+  stateReducer: React.Reducer<any, any>
 }
 function BaseAccordion(props: BaseAccordionProps) {
-  const [openIndexes, dispatch] = React.useReducer(single, [0])
+  const { stateReducer } = props
+  const [openIndexes, dispatch] = React.useReducer(stateReducer, [0])
   return <AccordionContext.Provider value={{ openIndexes, dispatch }} {...props} />
 }
 interface AccordionContext {
@@ -168,4 +178,5 @@ export {
   TabButton,
   TabButtons,
   single,
+  preventClose
 }

@@ -22,7 +22,7 @@ interface AccordionProps {
 }
 function Accordion({ items, ...props }: AccordionProps) {
   return (
-    <BaseAccordion stateReducer={single} {...props}>
+    <BaseAccordion stateReducer={preventClose} {...props}>
       {({ openIndexes, handleItemClick }: { openIndexes: number[], handleItemClick: (index: number) => void }) => (
         <div>
           {items.map((item: { title: string; contents: any }, index: any) => (
