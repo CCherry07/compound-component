@@ -57,7 +57,7 @@ function BaseTabs({ stateReducer = (state: any, changes: any) => changes, ...pro
 function Tabs({ items }: { items: Item[] }) {
   return (
     <BaseTabs>
-      {({ openIndexes, handleItemClick }) => (
+      {({ openIndexes, handleItemClick }: { openIndexes: number[], handleItemClick: (index: number) => void }) => (
         <div>
           <TabItems>
             {items.map((item, index) => (
@@ -130,7 +130,7 @@ function App() {
         marginTop: 60,
       }}
     >
-      <Tabs items={items} />
+      <Accordion items={items} />
     </div>
   )
 }

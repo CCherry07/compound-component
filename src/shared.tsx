@@ -65,13 +65,14 @@ const PoseAccordionContents = posed.div({
 })
 
 interface AccordionContentsProps {
-  isOpen: boolean
+  isOpen: boolean,
+  children: React.ReactElement
 }
 function AccordionContents({ isOpen, ...props }: AccordionContentsProps) {
   return (
     <PoseAccordionContents
       pose={isOpen ? 'open' : 'closed'}
-      {...css({ overflowY: 'hidden', textAlign: 'justify' })}
+      style={{ overflowY: 'hidden', textAlign: 'justify' }}
       {...props}
     />
   )
@@ -84,7 +85,7 @@ const AccordionItem = styled('div')(
     gridGap: 4,
     gridAutoFlow: 'row',
   },
-  (props: { direction: 'horizontal' | 'column' | 'row' }) => ({
+  (props: { direction: 'horizontal' | 'column' | 'row' | 'vertical' }) => ({
     gridAutoFlow: props.direction === 'horizontal' ? 'column' : 'row',
   }),
 )
@@ -108,12 +109,16 @@ const AboveTabItem = posed.div({
   closed: { opacity: 0, bottom: 30 },
 })
 
-function TabItem({ position, isOpen, ...props }: { position: string, isOpen: string }) {
+interface TabItemProps {
+  position: string, isOpen: boolean, children: React.ReactElement,
+}
+function TabItem({ position, isOpen, ...props }: TabItemProps) {
   props = {
     pose: isOpen ? 'open' : 'closed',
-    ...css({ position: 'absolute', overflowY: 'hidden' }),
+    style: { position: 'absolute', overflowY: 'hidden' },
     ...props,
   }
+
   return position === 'above' ? (
     <AboveTabItem {...props} />
   ) : (

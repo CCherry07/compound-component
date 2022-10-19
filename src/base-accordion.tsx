@@ -1,6 +1,6 @@
 import React from 'react'
 
-class Accordion extends React.Component {
+class Accordion extends React.Component<any> {
   static defaultProps = {
     stateReducer: (state: any, changes: any) => changes,
     onStateChange: () => { },
