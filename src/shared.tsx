@@ -111,6 +111,8 @@ const AboveTabItem = posed.div({
 
 interface TabItemProps {
   position: string, isOpen: boolean, children: React.ReactElement,
+  pose?: 'open' | 'closed',
+  style?: React.CSSProperties
 }
 function TabItem({ position, isOpen, ...props }: TabItemProps) {
   props = {
